@@ -2,18 +2,17 @@ import React, { useState,useContext,useEffect } from "react";
 import ProgressBar from "@ramonak/react-progress-bar";
 import Spinner from "./Spinner";
 import { MethodContext } from "../context/MethodState";
-
-function HateSpeech(props) {
+function Homepage(props) {
   const context = useContext(MethodContext);
   const { predict, results,calculatePercentage } = context;
 
-  const [speechText, setSpeechText] = useState("");
+  const [newsText, setnewsText] = useState("");
   const [percentage, setPercentage] = useState(null);
   const [loading, setLoading] = useState(0);
   const [status, setStatus] = useState(1);
 
   const handleOnChange = (event) => {
-    setSpeechText(event.target.value);
+    setnewsText(event.target.value);
   };
 
   function renameModel(old) {
@@ -29,14 +28,14 @@ function HateSpeech(props) {
   }
   const handleUpClick = async (e) => {
     e.preventDefault();
-    const url = props.url+"detectSpeech"
+    const url = props.url+"detectNews"
     setStatus(1);
-    if (countWords(speechText) < 10) {
-      props.showAlert(countWords(speechText));
+    if (countWords(newsText) < 10) {
+      props.showAlert(countWords(newsText));
       return;
     }
     setLoading(1);
-    let res = await predict(url,speechText);
+    let res = await predict(url,newsText);
     if (res.status === "success") {
       setPercentage(await calculatePercentage(res.result));
     } else {
@@ -46,12 +45,12 @@ function HateSpeech(props) {
   };
   useEffect(() => {
     document.title = `Fake News Detection`;
-  }, [results,percentage]);
+  }, [newsText,results,percentage]);
 
   return (
     <div>
       <p style={{ textAlign: "center" }}>
-        A Hate Speech detection web application using Deep Learning algorithms,
+        A fake news detection web application using Deep Learning algorithms,
         developed using Python and React.js.
       </p>
       <p style={{ textAlign: "center" }}>Enter your text to try it.</p>
@@ -65,8 +64,8 @@ function HateSpeech(props) {
                 id="Textarea'"
                 rows="5"
                 name="text"
-                placeholder="Write your Speech here..."
-                value={speechText}
+                placeholder="Write your news here..."
+                value={newsText}
                 onChange={handleOnChange}
                 required
               ></textarea>
@@ -152,4 +151,4 @@ function HateSpeech(props) {
   );
 }
 
-export default HateSpeech;
+export default Homepage;

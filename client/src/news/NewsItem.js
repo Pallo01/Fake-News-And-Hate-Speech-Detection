@@ -12,9 +12,10 @@ const NewsItem = (props) => {
   const [percent, setPercent] = useState(null);
 
   const prediction = async (text) => {
+    const url=props.url+"detectNews";
     setStatus(1);
     setLoading(1);
-    let res = await predict(text);
+    let res = await predict(url,text);
     if (res.status === "success") {
       setresults(res.result);
       setPercent(await calculatePercentage(res.result));

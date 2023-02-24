@@ -4,7 +4,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import Spinner from "../components/Spinner";
 import news from "./api/news.json";
 
-const News = () => {
+const News = (props) => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -55,6 +55,7 @@ const News = () => {
                   author={element.author}
                   date={element.publishedAt}
                   source={element.source.name}
+                  url={props.url}
                 />
               </div>
             );

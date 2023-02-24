@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import Navbar from "./components/Navbar";
 import Alert from "./components/Alert";
 import Homepage from "./components/Homepage";
+import HateSpeech from "./components/HateSpeech";
+import FakeNews from "./components/FakeNews";
 import News from "./news/News";
 import { MethodState } from "./context/MethodState";
 function App() {
@@ -14,10 +16,10 @@ function App() {
       setAlert(null);
     }, 2000);
   };
-  let api = "http://localhost:5000/predict";
+  let url = "http://localhost:5000/"
   return (
     <>
-      <MethodState>
+      <MethodState >
         <Router>
           <Navbar />
           <Alert alert={alert} />
@@ -26,9 +28,19 @@ function App() {
               <Route
                 exact
                 path="/"
-                element={<Homepage showAlert={showAlert} url={api} />}
+                element={<Homepage showAlert={showAlert} url={url} />}
               ></Route>
-              <Route exact path="/news" element={<News></News>}></Route>
+              <Route
+                exact
+                path="/detectfakeNews"
+                element={<FakeNews showAlert={showAlert} url={url} />}
+              ></Route>
+              <Route
+                exact
+                path="/detectHateSpeech"
+                element={<HateSpeech showAlert={showAlert} url={url} />}
+              ></Route>
+              <Route exact path="/news" element={<News url={url}></News>}></Route>
             </Routes>
           </div>
         </Router>

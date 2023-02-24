@@ -6,29 +6,34 @@ import nltk
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.models import load_model
 import joblib
+
+# Download necessary resources for tokenization and lemmatization
+nltk.download('punkt')
+nltk.download('wordnet')
 lemmatizer = nltk.WordNetLemmatizer()
 
 app = Flask(__name__)
 CORS(app)
 cors = CORS(app, resources={r"*": {"origins": "*"}})
 # Load the tokenizer
-tokenizer=""
+fn_tokenizer=""
 try:
-    tokenizer = joblib.load("models/tokenizer")
+    fn_tokenizer = joblib.load("models/fakeNews/tokenizer")
 except FileNotFoundError as e:
     print(e.filename+"Not loaded")
 #Load the models
-directory = ["models/RNN.h5", "models/CNN.h5"]
-models = []
-result = {}
-for i in range(len(directory)):
+fn_directory = ["models/fakeNews/CNN.h5", "models/fakeNews/RNN.h5"]
+fn_models = []
+fn_results={}
+for i in range(len(fn_directory)):
     try:
-        x = directory[i]
-        models.append(load_model(x))
-        modelName = x[x.index('/')+1:x.index('.h5')]
-        result[modelName] = "-1"
+        x = fn_directory[i]
+        fn_models.append(load_model(x))
+        modelName = x[x.rindex('/')+1:x.index('.h5')]
+        fn_results[modelName] = "-1"
     except OSError as e:
-        print(">"+directory[i]+" Not loaded")
+        print(">"+fn_directory[i]+" Not loaded")
+        
 
 
 def wordopt(text):
@@ -48,18 +53,18 @@ def lemmatize_text(text):
     return ' '.join(lemmatized_words)
 
 
-def predict(text):
-    for i in range(len(models)):
-        key = list(result.keys())[i]
+def fn_predict(text):
+    for i in range(len(fn_models)):
+        key = list(fn_results.keys())[i]
         try:
-            prediction = models[i].predict(text);
+            prediction = fn_models[i].predict(text)
             if(prediction >0.5):
-                result[key] = "1"
+               fn_results[key] = "1"
             else:
-                result[key] = "0"
+                fn_results[key] = "0"
         except:
-            print("Failed to predict with model"+models[i])
-    return result
+            print("Failed to predict with model"+fn_models[i])
+    return fn_results
 
 
 @app.route('/', methods=['GET'])
@@ -67,18 +72,18 @@ def home():
     return "Backend Running....."
 
 
-@app.route('/predict', methods=['POST'])
+@app.route('/detectNews', methods=['POST'])
 def index():
     article_text = request.json.get('text')
-    if (len(models) and tokenizer):
+    if (len(fn_models) and fn_tokenizer):
         article_text = wordopt(article_text)
         article_text = lemmatize_text(article_text)
         # Convert the article text into numerical features
-        sequences = tokenizer.texts_to_sequences([article_text])
+        sequences = fn_tokenizer.texts_to_sequences([article_text])
         # Pad sequences to same length
         X_padded = pad_sequences(sequences, maxlen=500, padding='post')
         # Make a prediction on the padded sequence of article
-        prediction = predict(X_padded)
+        prediction = fn_predict(X_padded)
         # Return the prediction result as a JSON response
         return {"status": "success", "result": prediction}
     else:

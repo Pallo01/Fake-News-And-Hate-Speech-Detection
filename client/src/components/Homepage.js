@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import ProgressBar from "@ramonak/react-progress-bar";
 import Axios from "axios";
 import Spinner from "./Spinner";
@@ -64,6 +64,10 @@ function Homepage(props) {
       setLoading(0);
     }
   };
+  useEffect(() => {
+    document.title = `Fake News Detection`;
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <div>

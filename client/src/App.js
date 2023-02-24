@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Navbar from "./components/Navbar";
 import Alert from "./components/Alert";
 import Homepage from "./components/Homepage";
+import HateSpeech from "./components/HateSpeech";
 import News from "./news/News";
 import { MethodState } from "./context/MethodState";
 function App() {
@@ -27,6 +28,11 @@ function App() {
                 exact
                 path="/"
                 element={<Homepage showAlert={showAlert} url={api} />}
+              ></Route>
+              <Route
+                exact
+                path="/hatespeech"
+                element={<HateSpeech showAlert={showAlert} url={api} />}
               ></Route>
               <Route exact path="/news" element={<News></News>}></Route>
             </Routes>

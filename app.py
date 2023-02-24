@@ -6,6 +6,10 @@ import nltk
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.models import load_model
 import joblib
+
+# Download necessary resources for tokenization and lemmatization
+nltk.download('punkt')
+nltk.download('wordnet')
 lemmatizer = nltk.WordNetLemmatizer()
 
 app = Flask(__name__)

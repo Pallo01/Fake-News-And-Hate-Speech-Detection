@@ -67,7 +67,7 @@ const NewsItem = (props) => {
           </a>
           {/* Prediction */}
           <div
-            style={{ display: "inline", position: "relative", right: "-13rem" }}
+            style={{ display: "inline", position: "relative", right: "-8rem" }}
             className="card-text container"
           >
             {!loading ? (

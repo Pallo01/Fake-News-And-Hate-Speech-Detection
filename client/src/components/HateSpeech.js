@@ -45,7 +45,7 @@ function HateSpeech(props) {
     setLoading(0);
   };
   useEffect(() => {
-    document.title = `Fake News Detection`;
+    document.title = `Hate Speech Detection`;
   }, [results,percentage]);
 
   return (

@@ -19,7 +19,6 @@ cors = CORS(app, resources={r"*": {"origins": "*"}})
 fn_tokenizer=""
 try:
     fn_tokenizer = joblib.load("models/fakeNews/tokenizer")
-    hs_tokenizer=joblib.load("models/hateSpeech/tokenizer")
 except FileNotFoundError as e:
     print(e.filename+"Not loaded")
 #Load the models

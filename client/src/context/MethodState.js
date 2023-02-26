@@ -8,13 +8,12 @@ const MethodState = (props) => {
     const [results, setresults] = useState({});
     function calculatePercentage(result) {
         let models = Object.keys(result);
-        let total = 0,
-            totalReal = 0;
+        let total = models.length
+        let totalReal = 0;
         models.forEach((i) => {
             if (result[i] === "1") {
                 totalReal = totalReal + 1;
             }
-            total = total + 1;
         });
         let percent = (totalReal / total) * 100;
         return Math.ceil(percent);
@@ -33,8 +32,13 @@ const MethodState = (props) => {
             return {"status":"fail"};
         }
     };
+    function countWords(text) {
+        return text.split(/\s+/).filter((element) => {
+          return element.length !== 0;
+        }).length;
+    }
     return (
-        <MethodContext.Provider value={{ predict,results,calculatePercentage}}>
+        <MethodContext.Provider value={{ predict,results,calculatePercentage,countWords}}>
             {props.children}
         </MethodContext.Provider>
     )

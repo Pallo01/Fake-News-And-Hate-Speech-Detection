@@ -10,8 +10,8 @@ import News from "./news/News";
 import { MethodState } from "./context/MethodState";
 function App() {
   const [alert, setAlert] = useState(null);
-  const showAlert = (message) => {
-    setAlert({ msg: message });
+  const showAlert = (curr,req) => {
+    setAlert({ curr:curr,req: req });
     setTimeout(() => {
       setAlert(null);
     }, 2000);

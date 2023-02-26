@@ -31,7 +31,7 @@ function Homepage(props) {
     const url = props.url+"detectNews"
     setStatus(1);
     if (countWords(newsText) < 10) {
-      props.showAlert(countWords(newsText));
+      props.showAlert(countWords(newsText),10);
       return;
     }
     setLoading(1);

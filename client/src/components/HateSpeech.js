@@ -1,154 +1,133 @@
-import React, { useState,useContext,useEffect } from "react";
-import ProgressBar from "@ramonak/react-progress-bar";
-import Spinner from "./Spinner";
+import React, { useState, useContext, useEffect } from "react";
 import { MethodContext } from "../context/MethodState";
+import Spinner from "./Spinner";
 
 function HateSpeech(props) {
   const context = useContext(MethodContext);
-  const { predict, results,calculatePercentage } = context;
-
+  const { predict, calculatePercentage,countWords } = context;
   const [speechText, setSpeechText] = useState("");
-  const [percentage, setPercentage] = useState(null);
   const [loading, setLoading] = useState(0);
   const [status, setStatus] = useState(1);
+  const [results, setResults] = useState([]);
+  const [refresh,setRefresh]=useState(0);
 
   const handleOnChange = (event) => {
     setSpeechText(event.target.value);
   };
 
-  function renameModel(old) {
-    if (old === "CNN") return "Convolutional Neural Networks (CNNs)";
-    else if (old === "RNN") return "Recurrent Neural Networks (RNNs)";
-    else if (old === "SVM") return "Support Vector Machine";
-    return old;
-  }
-  function countWords(text) {
-    return text.split(/\s+/).filter((element) => {
-      return element.length !== 0;
-    }).length;
-  }
+  const loaddata = async () => {
+    if ("speechResults" in localStorage) {
+      let localRes = JSON.parse(localStorage.getItem("speechResults"));
+      setResults(localRes);
+    }
+     else {
+      localStorage.setItem("speechResults", "[]");
+    }
+  };
+
   const handleUpClick = async (e) => {
+    setRefresh(0)
     e.preventDefault();
-    const url = props.url+"detectSpeech"
-    setStatus(1);
-    if (countWords(speechText) < 10) {
-      props.showAlert(countWords(speechText));
+    if (countWords(speechText) < 2) {
+      props.showAlert(countWords(speechText),2);
       return;
     }
+    setStatus(1);
     setLoading(1);
+    const url = props.url+"detectSpeech"
     let res = await predict(url,speechText);
     if (res.status === "success") {
-      setPercentage(await calculatePercentage(res.result));
+      res.result.percent = await calculatePercentage(res.result);
+      res.result.text = speechText;
+      console.log(res.result)
+      let localRes = await JSON.parse(localStorage.getItem("speechResults"));
+      localRes.push(res.result);
+      localStorage.setItem("speechResults", JSON.stringify(localRes));
     } else {
       setStatus(0);
     }
+    setSpeechText("");
     setLoading(0);
+    setRefresh(1)
+  };
+
+  const deleteResult = async (index) => {
+    setRefresh(0)
+    let localRes = await JSON.parse(localStorage.getItem("speechResults"));
+    localRes.splice(index, 1);
+    localStorage.setItem("speechResults", JSON.stringify(localRes));
+    setRefresh(1)
   };
   useEffect(() => {
-    document.title = `Hate Speech Detection`;
-  }, [results,percentage]);
-
+    loaddata();
+  }, [refresh]);
   return (
-    <div>
-      <p style={{ textAlign: "center" }}>
-        A Hate Speech detection web application using Deep Learning algorithms,
-        developed using Python and React.js.
-      </p>
-      <p style={{ textAlign: "center" }}>Enter your text to try it.</p>
-      <br />
-      <div className="container">
-        <form>
-          <div className="col-three-forth text-center col-md-offset-2">
+    <>
+      <div className="container my-3">
+        <h1>Detect Hate Speech</h1>
+        <div className="card ">
+          <div className="card-body">
+            <h5 className="card-title">Add a Speech</h5>
             <div className="form-group">
               <textarea
-                className="form-control jTextarea mt-3"
-                id="Textarea'"
-                rows="5"
-                name="text"
-                placeholder="Write your Speech here..."
                 value={speechText}
                 onChange={handleOnChange}
                 required
+                className="form-control"
+                id="addTxt"
+                rows="3"
               ></textarea>
-              <br />
-              <button
-                className="btn btn-primary btn-outline btn-md"
-                type="submit"
-                onClick={handleUpClick}
-                name="predict"
-              >
-                Detect
-              </button>
             </div>
-          </div>
-        </form>
-      </div>
-      <br />
-      {loading ? <Spinner /> : <></>}
-      {status ? (
-        <div style={{ textAlign: "center" }}>
-          <strong>
-            Prediction
-            <ProgressBar
-              bgColor="#0d6efd"
-              height="60px"
-              completed={percentage==null?0:percentage}
-              customLabel={percentage + "% True"}
-            />
-            <h5>{percentage}%</h5>
-          </strong>
-          {percentage !==null ? (
-            <>
-              <span className="placeholder col-6">
-                The prediction percentage is based on Results of all the models
-              </span>
-              <br />
-              <br />
-              <div className="collapseWindow ">
-                <p>
-                  <button
-                    className="btn btn-primary"
-                    type="button"
-                    data-toggle="collapse"
-                    data-target="#collapseExample"
-                    aria-expanded="false"
-                    aria-controls="collapseExample"
-                  >
-                    Click to View Results Individually
-                  </button>
-                </p>
-                <div className="collapse" id="collapseExample">
-                  <ul style={{ textAlign: "initial" }} className="list-group">
-                    {Object.keys(results)
-                      .sort()
-                      .map((model, key) => (
-                        <li className="list-group-item" key={key}>
-                          {renameModel(model)}&emsp;:&emsp;
-                          <div
-                            className={
-                              results[model] === "1"
-                                ? "btn btn-success btn-sm"
-                                : "btn btn-danger btn-sm"
-                            }
-                          >
-                            {results[model] === "1" ? "Real" : "Fake"}
-                          </div>
-                        </li>
-                      ))}
-                  </ul>
-                </div>
+            <button
+              type="submit"
+              onClick={handleUpClick}
+              name="predict"
+              className="btn btn-primary my-2"
+              id="addBtn"
+            >
+              Detect
+            </button>
+            {loading ? <Spinner></Spinner> : <></>}
+            {!status ? (
+              <div className="text-danger placeholder d-flex justify-content-center">
+                !!!Failed to Predict, Seems issue from server side
               </div>
-            </>
-          ) : (
-            <></>
-          )}
+            ) : (
+              <></>
+            )}
+          </div>
         </div>
-      ) : (
-        <div className="text-danger placeholder d-flex justify-content-center">
-          !!!Failed to Predict, Seems issue from server side
+        <hr />
+        <h1>Your Results</h1>
+        <hr />
+        <div id="notes" className="row container-fluid">
+          {results.map((elem, key) => (
+            <div
+              id={key}
+              className="noteCard my-2 mx-2 card "
+              style={{ width: "20rem", display: "block" }}
+            >
+              <span
+                style={{ float: "right", cursor: "pointer" }}
+                onClick={() => deleteResult(key)}
+              >
+                <i className="fa fa-times" aria-hidden="true"></i>
+              </span>
+              <div className="card-body">
+                <h5
+                  className={`btn-sm user-select-none text-center ${
+                    elem.percent >= 50 ? "btn-danger" : "btn-success"
+                  }`}
+                >
+                  {elem.percent >= 50 ? "Hate Speech" : "Not a Hate Speech"}
+                </h5>
+                <p className="card-text ">{elem.text}</p>
+              </div>
+            </div>
+          ))}
         </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 }
 

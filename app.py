@@ -19,6 +19,7 @@ cors = CORS(app, resources={r"*": {"origins": "*"}})
 fn_tokenizer=""
 try:
     fn_tokenizer = joblib.load("models/fakeNews/tokenizer")
+    hs_tokenizer=joblib.load("models/hateSpeech/tokenizer")
 except FileNotFoundError as e:
     print(e.filename+"Not loaded")
 #Load the models
@@ -85,7 +86,58 @@ def index():
         # Make a prediction on the padded sequence of article
         prediction = fn_predict(X_padded)
         # Return the prediction result as a JSON response
-        return {"status": "success", "result": prediction}
+        return {"model":"fakeNews","status": "success", "result": prediction}
+    else:
+        return {"status": "fail"}
+
+# Load the tokenizer
+hs_tokenizer=""
+try:
+    hs_tokenizer=joblib.load("models/hateSpeech/tokenizer")
+except FileNotFoundError as e:
+    print(e.filename+"Not loaded")
+
+#Load the models
+hs_directory = ["models/hateSpeech/CNN.h5", "models/hateSpeech/RNN.h5"]
+hs_models=[]
+hs_results={}
+for i in range(len(hs_directory)):
+    try:
+        x = hs_directory[i]
+        hs_models.append(load_model(x))
+        modelName = x[x.rindex('/')+1:x.index('.h5')]
+        hs_results[modelName] = "-1"
+    except OSError as e:
+        print(">"+hs_directory[i]+" Not loaded")
+
+    
+def hs_predict(text):
+    for i in range(len(hs_models)):
+        key = list(hs_results.keys())[i]
+        try:
+            prediction = hs_models[i].predict(text)
+            if(prediction >0.5):
+               hs_results[key] = "1"
+            else:
+                hs_results[key] = "0"
+        except:
+            print("Failed to predict with model"+hs_models[i])
+    return hs_results
+    
+@app.route('/detectSpeech', methods=['POST'])
+def index2():
+    article_text = request.json.get('text')
+    if (len(hs_models) and hs_tokenizer):
+        article_text = wordopt(article_text)
+        article_text = lemmatize_text(article_text)
+        # Convert the article text into numerical features
+        sequences = hs_tokenizer.texts_to_sequences([article_text])
+        # Pad sequences to same length
+        X_padded = pad_sequences(sequences, maxlen=500, padding='post')
+        # Make a prediction on the padded sequence of article
+        prediction = hs_predict(X_padded)
+        # Return the prediction result as a JSON response
+        return {"model":"hateSpeech","status": "success", "result": prediction}
     else:
         return {"status": "fail"}
 

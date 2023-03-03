@@ -1,7 +1,8 @@
 # Fake News Detection 
 
-## Requires Python3.7-3.10 Version and Node.js(any)
-### Run this Command on project directory to download the required Python libraries (only once )
+## Requires Python 3.7.9 and Node.js(any)
+### Run this Commands on project directory to download the required Python libraries (only once )
+#### pip install --upgrade pip --user
 #### pip install -r requirements.txt 
 
 ### To Start the server after training the model

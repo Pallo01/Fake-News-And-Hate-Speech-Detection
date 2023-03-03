@@ -10,11 +10,19 @@ import joblib
 # Download necessary resources for tokenization and lemmatization
 nltk.download('punkt')
 nltk.download('wordnet')
+nltk.download('stopwords')
+from nltk.corpus import stopwords
 lemmatizer = nltk.WordNetLemmatizer()
 
 app = Flask(__name__)
 CORS(app)
 cors = CORS(app, resources={r"*": {"origins": "*"}})
+
+@app.route('/', methods=['GET'])
+def home():
+    return "Backend Running....."
+
+
 # Load the tokenizer
 fn_tokenizer=""
 try:
@@ -35,7 +43,6 @@ for i in range(len(fn_directory)):
         print(">"+fn_directory[i]+" Not loaded")
         
 
-
 def wordopt(text):
     text = text.lower()
     text = re.sub('\[.*?\]', '', text)
@@ -47,9 +54,11 @@ def wordopt(text):
     text = re.sub('\w*\d\w*', '', text)
     return text
 
+# Define a function to lemmatize a list of words
 def lemmatize_text(text):
     words = nltk.word_tokenize(text)
-    lemmatized_words = [lemmatizer.lemmatize(word) for word in words]
+    # lemmatized_words = [lemmatizer.lemmatize(word) for word in words]
+    lemmatized_words = [lemmatizer.lemmatize(word) for word in words if word not in set(stopwords.words('english'))]
     return ' '.join(lemmatized_words)
 
 
@@ -67,13 +76,8 @@ def fn_predict(text):
     return fn_results
 
 
-@app.route('/', methods=['GET'])
-def home():
-    return "Backend Running....."
-
-
 @app.route('/detectNews', methods=['POST'])
-def index():
+def index1():
     article_text = request.json.get('text')
     if (len(fn_models) and fn_tokenizer):
         article_text = wordopt(article_text)
@@ -87,7 +91,7 @@ def index():
         # Return the prediction result as a JSON response
         return {"model":"fakeNews","status": "success", "result": prediction}
     else:
-        return {"status": "fail"}
+        return {"model":"fakeNews","status": "fail"}
 
 # Load the tokenizer
 hs_tokenizer=""
@@ -125,20 +129,20 @@ def hs_predict(text):
     
 @app.route('/detectSpeech', methods=['POST'])
 def index2():
-    article_text = request.json.get('text')
+    speech = request.json.get('text')
     if (len(hs_models) and hs_tokenizer):
-        article_text = wordopt(article_text)
-        article_text = lemmatize_text(article_text)
+        speech = wordopt(speech)
+        speech = lemmatize_text(speech)
         # Convert the article text into numerical features
-        sequences = hs_tokenizer.texts_to_sequences([article_text])
+        speech_seq = hs_tokenizer.texts_to_sequences([speech])
         # Pad sequences to same length
-        X_padded = pad_sequences(sequences, maxlen=500, padding='post')
+        speech_pad = pad_sequences(speech_seq, padding='post', maxlen=500)
         # Make a prediction on the padded sequence of article
-        prediction = hs_predict(X_padded)
+        prediction = hs_predict(speech_pad)
         # Return the prediction result as a JSON response
         return {"model":"hateSpeech","status": "success", "result": prediction}
     else:
-        return {"status": "fail"}
+        return {"model":"hateSpeech","status": "fail"}
 
 
 if __name__ == '__main__':

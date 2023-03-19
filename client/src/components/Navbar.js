@@ -1,8 +1,9 @@
 import React from 'react'
-import { Link } from "react-router-dom";
+import { Link,useLocation } from "react-router-dom";
 
 
 export default function Navbar() {
+    const location = useLocation();
     return (
         <>
             <nav style={{ backgroundColor: "rgb(205 216 218)" }} className="navbar fixed-top navbar-expand-lg navbar-light" >
@@ -15,21 +16,25 @@ export default function Navbar() {
                     <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav">
                             <li className="nav-item active">
-                                <Link className="nav-link" to="detectFakeNews">Detect-FakeNews <span className="sr-only">(current)</span></Link>
+                                <Link className="nav-link" to="/latestNews">LatestNews<span className="sr-only">(current)</span></Link>
                             </li>
                             <li className="nav-item active">
-                                <Link className="nav-link" to="detectHateSpeech">Detect-HateSpeech <span className="sr-only">(current)</span></Link>
+                                <Link className="nav-link" to="/datasetNews">DatasetNews<span className="sr-only">(current)</span></Link>
                             </li>
                         </ul>
                     </div>
                     <div className="nav navbar-nav navbar-right" id="navbarNavAltMarkup">
                         <div className="navbar-nav">
-                            <Link className="nav-link"
-                                to="/news">LatestNews</Link>
                             <Link className="nav-link" target="_blank"
-                                to="https://github.com/Pallo01/Fake-News-And-Hate-Speech-Detection/blob/main/fn_modelTraining.ipynb">NoteBook</Link>
+                                to="/detectFakeNews">Detect News</Link>
                             <Link className="nav-link" target="_blank"
-                                to="https://github.com/Pallo01/Fake-News-And-Hate-Speech-Detection">Source Code</Link>
+                                to="/detectHateSpeech">Detect Speech</Link>
+                            {location.pathname==="/detectFakeNews" && <Link className="nav-link" target="_blank"
+                                to="https://github.com/Pallo01/Fake-News-And-Hate-Speech-Detection/blob/main/fn_modelTraining.ipynb">NoteBook</Link>}
+                            {location.pathname==="/detectHateSpeech" && <Link className="nav-link" target="_blank"
+                                to="https://github.com/Pallo01/Fake-News-And-Hate-Speech-Detection/blob/main/hs_modelTraining.ipynb">NoteBook</Link>}
+                            {location.pathname!=="/detectFakeNews" && location.pathname!=="/detectHateSpeech" && <Link className="nav-link" target="_blank"
+                                to="https://github.com/Pallo01/Fake-News-And-Hate-Speech-Detection">Source Code</Link>}
                         </div>
                     </div>
                 </div>

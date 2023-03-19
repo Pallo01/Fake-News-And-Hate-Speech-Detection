@@ -6,15 +6,16 @@ import Alert from "./components/Alert";
 import Homepage from "./components/Homepage";
 import HateSpeech from "./components/HateSpeech";
 import FakeNews from "./components/FakeNews";
-import News from "./news/News";
+import LatestNews from "./components/LatestNews";
+import DatasetNews from "./components/DatasetNews";
 import { MethodState } from "./context/MethodState";
 function App() {
   const [alert, setAlert] = useState(null);
-  const showAlert = (curr,req) => {
-    setAlert({ curr:curr,req: req });
+  const showAlert = (msg,text,label,time=2000) => {
+    setAlert({ msg:msg,text:text,label:label});
     setTimeout(() => {
       setAlert(null);
-    }, 2000);
+    }, time);
   };
   let url = "http://localhost:5000/"
   return (
@@ -40,7 +41,8 @@ function App() {
                 path="/detectHateSpeech"
                 element={<HateSpeech showAlert={showAlert} url={url} />}
               ></Route>
-              <Route exact path="/news" element={<News url={url}></News>}></Route>
+              <Route exact path="/latestNews" element={<LatestNews showAlert={showAlert} url={url}></LatestNews>}></Route>
+              <Route exact path="/datasetNews" element={<DatasetNews showAlert={showAlert} url={url}></DatasetNews>}></Route>
             </Routes>
           </div>
         </Router>

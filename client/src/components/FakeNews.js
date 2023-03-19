@@ -31,7 +31,7 @@ function Homepage(props) {
     const url = props.url+"detectNews"
     setStatus(1);
     if (countWords(newsText) < 10) {
-      props.showAlert(countWords(newsText),10);
+      props.showAlert("Invalid Input",`Enter atleast 10 words,current words: ${countWords(newsText)}`,"danger");
       return;
     }
     setLoading(1);
@@ -44,7 +44,7 @@ function Homepage(props) {
     setLoading(0);
   };
   useEffect(() => {
-    document.title = `Fake News Detection`;
+    document.title = `Detect News`;
   }, [newsText,results,percentage]);
 
   return (

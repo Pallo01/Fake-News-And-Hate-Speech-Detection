@@ -29,7 +29,7 @@ function HateSpeech(props) {
     setRefresh(0)
     e.preventDefault();
     if (countWords(speechText) < 2) {
-      props.showAlert(countWords(speechText),2);
+      props.showAlert("Invalid Input",`Enter atleast 2 words,current words: ${countWords(speechText)}`,"danger");
       return;
     }
     setStatus(1);
@@ -59,6 +59,7 @@ function HateSpeech(props) {
     setRefresh(1)
   };
   useEffect(() => {
+    document.title = `Detect Speech`;
     loaddata();
   }, [refresh]);
   return (
@@ -103,7 +104,7 @@ function HateSpeech(props) {
         <div id="notes" className="row container-fluid">
           {results.map((elem, key) => (
             <div
-              id={key}
+              key={key}
               className="noteCard my-2 mx-2 card "
               style={{ width: "20rem", display: "block" }}
             >

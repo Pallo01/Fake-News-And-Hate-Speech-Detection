@@ -49,38 +49,47 @@ function Homepage(props) {
 
   return (
     <div>
-      <p style={{ textAlign: "center" }}>
+      {/* <p style={{ textAlign: "center" }}>
         A fake news detection web application using Deep Learning algorithms,
         developed using Python and React.js.
-      </p>
-      <p style={{ textAlign: "center" }}>Enter your text to try it.</p>
+      </p> */}
+      {/* <p style={{ textAlign: "center" }}>Enter your text to try it.</p> */}
       <br />
       <div className="container">
-        <form>
-          <div className="col-three-forth text-center col-md-offset-2">
-            <div className="form-group">
-              <textarea
-                className="form-control jTextarea mt-3"
-                id="Textarea'"
-                rows="5"
-                name="text"
-                placeholder="Write your news here..."
-                value={newsText}
-                onChange={handleOnChange}
-                required
-              ></textarea>
-              <br />
-              <button
-                className="btn btn-primary btn-outline btn-md"
-                type="submit"
-                onClick={handleUpClick}
-                name="predict"
-              >
-                Detect
-              </button>
-            </div>
+        <h1 style={{ textAlign: "left" }}>Detect Fake News</h1>
+        <div className="card ">
+          <div className="card-body">
+            <h5 className="card-title">Enter your text to try it</h5>
+            <div className="form-group"></div>
+            <form>
+              <div className="col-three-forth text-center col-md-offset-2">
+                <div className="form-group">
+                  <textarea
+                    className="form-control " 
+                    // jTextarea mt-3
+                    id="Textarea'"
+                    rows="5"
+                    name="text"
+                    placeholder="Write your news here..."
+                    value={newsText}
+                    onChange={handleOnChange}
+                    required
+                  ></textarea>
+                  <br />
+              
+                  <button
+                    className="btn btn-primary btn-outline btn-md"
+                    type="submit"
+                    onClick={handleUpClick}
+                    name="predict"
+                  >
+                    Detect
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
       <br />
       {loading ? <Spinner /> : <></>}

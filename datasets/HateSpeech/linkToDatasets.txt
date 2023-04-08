@@ -1,1 +1,3 @@
 https://www.kaggle.com/datasets/akashish36/hate-speech-detection
+
+https://drive.google.com/drive/folders/1-HKjGCt1bITQc6SSnfVpeGouy-s5YWhL?usp=share_link

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import NewsItem from "./DatasetNewsItem";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Spinner from "./Spinner";
-import testNews from "../api/testNews.json";
+import testNews from "../api/testData.json";
 import img from "./img/kaggle.png"
 
 const LatestNews = (props) => {

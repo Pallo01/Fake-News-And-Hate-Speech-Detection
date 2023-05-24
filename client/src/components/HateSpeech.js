@@ -65,18 +65,19 @@ function HateSpeech(props) {
   return (
     <>
       <div className="container my-3">
-        <h1>Detect Hate Speech</h1>
+        <h1 style={{ textAlign: "left" }}>Detect Hate Speech</h1>
         <div className="card ">
           <div className="card-body">
             <h5 className="card-title">Add a Speech</h5>
             <div className="form-group">
               <textarea
                 value={speechText}
+                placeholder="Write your speech here..."
                 onChange={handleOnChange}
                 required
                 className="form-control"
                 id="addTxt"
-                rows="3"
+                rows="5"
               ></textarea>
             </div>
             <button

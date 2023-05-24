@@ -1,1 +1,3 @@
 https://www.kaggle.com/datasets/akashish36/fake-news-detection
+
+https://drive.google.com/drive/folders/1SJ67JlJg4spJ7uIEPD5tQ9bqa8IQhK_F?usp=share_link

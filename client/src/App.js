@@ -29,7 +29,7 @@ function App() {
               <Route
                 exact
                 path="/"
-                element={<Homepage showAlert={showAlert} url={url} />}
+                element={<LatestNews showAlert={showAlert} url={url} />}
               ></Route>
               <Route
                 exact
